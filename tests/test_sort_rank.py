@@ -60,22 +60,19 @@ def test_top_k_k_equals_length():
 
 def test_binary_search_found_middle():
     arr = np.array([1, 2, 3, 4, 5])
-    assert binary_search(arr, 3) == 2
-
+    assert binary_search(arr, 3) == (2, True)
 
 def test_binary_search_found_first():
     arr = np.array([1, 2, 3, 4, 5])
-    assert binary_search(arr, 1) == 0
-
+    assert binary_search(arr, 1) == (0, True)
 
 def test_binary_search_found_last():
     arr = np.array([1, 2, 3, 4, 5])
-    assert binary_search(arr, 5) == 4
-
+    assert binary_search(arr, 5) == (4, True)
 
 def test_binary_search_not_found():
     arr = np.array([1, 2, 3, 4, 5])
-    assert binary_search(arr, 10) == -1
+    assert binary_search(arr, 10) == (5, False)
 
 
 def test_quickselect_smallest():
