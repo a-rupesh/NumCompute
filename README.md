@@ -1,9 +1,43 @@
 # NumCompute
 
-NumCompute is a lightweight NumPy-based numerical computing toolkit built for the Programming in AI course.
+NumCompute is a lightweight, modular, NumPy-based scientific computing toolkit built for the Programming in AI course.
 
-The goal of this project is to implement core data processing, mathematical, and evaluation utilities from scratch using **vectorised NumPy operations only**.
+The project implements reusable, vectorised numerical components from scratch using only plain Python and NumPy. It focuses on numerical correctness, clean API design, testing, and reproducible benchmarking.
 
+---
+
+## Project Goals
+
+This toolkit is designed to provide:
+
+- reusable NumPy-based components
+- vectorised implementations where possible
+- clean and consistent APIs
+- strong edge-case handling
+- unit tests and reproducible benchmarks
+
+---
+
+## Package Structure
+
+```text
+NumCompute/
+├── numcompute/
+│   ├── __init__.py
+│   ├── io.py
+│   ├── preprocessing.py
+│   ├── sort_search.py
+│   ├── rank.py
+│   ├── stats.py
+│   ├── metrics.py
+│   ├── optim.py
+│   ├── pipeline.py
+│   ├── utils.py
+│   └── benchmarking.py
+├── tests/
+├── demo/
+├── README.md
+└── requirements.txt
 ---
 
 ##  Modules
