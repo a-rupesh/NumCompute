@@ -40,92 +40,113 @@ NumCompute/
 └── requirements.txt
 ---
 
-##  Modules
+Modules
+io.py
 
-### Data Handling
-- `io.py`  
-  Load CSV files with support for delimiters and missing values.
+CSV loading utilities using NumPy.
 
----
+Features:
 
-### Preprocessing
-- `StandardScaler` — z-score normalization  
-- `MinMaxScaler` — feature scaling  
-- `SimpleImputer` — missing value replacement  
-- `OneHotEncoder` — categorical encoding  
+configurable delimiter support
+missing value handling
+NumPy array output
+preprocessing.py
 
----
+Preprocessing transformers with a simple fit/transform API.
 
-### Sorting & Searching
-- Stable sorting  
-- Multi-key sorting  
-- Top-k selection (`argpartition`)  
-- Quickselect (k-th smallest element)  
-- Binary search  
+Includes:
 
----
+StandardScaler
+MinMaxScaler
+SimpleImputer
+OneHotEncoder
+sort_search.py
 
-### Ranking
-- `rank()` with tie handling:
-  - average
-  - dense
-  - ordinal  
-- `percentile()` computation  
+Sorting, searching, and top-k helpers.
 
----
+Includes:
 
-### Statistics
-- Mean, median, standard deviation  
-- Min / max  
-- Quantiles  
-- Histogram  
-- Axis-based computations  
+stable sorting
+multi-key sorting
+top-k selection
+quickselect
+binary search
+rank.py
 
----
+Ranking and percentile utilities.
 
-### Metrics
-#### Classification
-- Accuracy  
-- Precision  
-- Recall  
-- F1-score  
-- Confusion matrix  
+Includes:
 
-#### Regression
-- Mean Squared Error (MSE)  
+tie-aware ranking
+percentile computation
+multiple ranking methods
+stats.py
 
+Descriptive statistics with NumPy.
 
----
+Includes:
 
-### Optimisation
-- Finite difference gradient:
-  - forward difference  
-  - central difference  
-- Jacobian computation  
+mean
+median
+standard deviation
+min / max
+histogram
+quantiles
+metrics.py
 
----
+Evaluation metrics for classification and regression.
 
-### Pipeline
-- Chaining transformers and models  
-- Supports:
-  - `fit()`
-  - `transform()`
-  - `predict()`  
+Classification:
 
----
+accuracy
+precision
+recall
+f1-score
+confusion matrix
 
-### Utilities
-- Array validation helpers  
-- Activation functions (sigmoid, relu)  
-- Stable softmax  
-- LogSumExp (numerical stability)  
-- Distance calculations  
-- Top-k helpers  
-- Batch generation  
+Regression:
 
----
+mean squared error
+optim.py
 
-## Running Tests
+Finite-difference optimisation utilities.
+
+Includes:
+
+numerical gradient estimation
+Jacobian estimation
+forward and central difference methods
+pipeline.py
+
+Simple pipeline abstraction for chaining transformers and estimators.
+
+Includes:
+
+Pipeline
+FeatureUnion
+utils.py
+
+Shared helper utilities.
+
+Includes:
+
+array validation
+activation functions
+numerically stable softmax
+logsumexp
+distance helpers
+top-k helper functions
+batching utilities
+benchmarking.py
+
+Micro-benchmark utilities for comparing vectorised implementations with Python-loop implementations.
+
+Includes:
+
+benchmark timing helpers
+repeated runs
+summary tables
+vectorised vs loop comparison utilities
 
 ```bash
 python -m pytest -q
