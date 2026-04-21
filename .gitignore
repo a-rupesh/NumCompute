@@ -1,8 +1,30 @@
+# Python
 __pycache__/
-*.pyc
-.ipynb_checkpoints/
-.venv/
+*.py[cod]
+
+# Virtual environments
 venv/
+.venv/
 .env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
 .pytest_cache/
+.coverage
+
+# Editors
 .vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
