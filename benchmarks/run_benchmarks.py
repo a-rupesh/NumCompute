@@ -1,12 +1,4 @@
-"""
-Benchmark script for NumCompute.
 
-Compares vectorised NumPy implementations vs Python loop implementations.
-Produces simple timing summaries.
-
-Run:
-    python benchmark/run_benchmarks.py
-"""
 
 import numpy as np
 
