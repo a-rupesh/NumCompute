@@ -1,206 +1,89 @@
+"""Evaluation metrics for classification and regression."""
+
+from __future__ import annotations
+
 import numpy as np
 
-def accuracy(y_true, y_pred):
-    """
-    Calculates the accuracy of a binary classification model given the true and
-    predicted labels.
-    Args:
-        y_true (np.ndarray): Array of size (N,) containing true labels
-        y_pred (np.ndarray): Array of size (N,) containing predicted labels
-    Outputs:
-        float: Accuracy of the model.
-    """
 
-    # Exception Handling
-    if not isinstance(y_true, np.ndarray):
-        raise TypeError("y_true must be a NumPy array.")
-    if not isinstance(y_pred, np.ndarray):
-        raise TypeError("y_pred must be a NumPy array.")
-    if y_true.ndim != 1:
-        raise ValueError("y_true must be a 1D array.")
-    if y_pred.ndim != 1:
-        raise ValueError("y_pred must be a 1D array.")
-    if y_true.shape != y_pred.shape:
+def _validate_same_shape_1d(y_true, y_pred):
+    yt = np.asarray(y_true)
+    yp = np.asarray(y_pred)
+    if yt.ndim != 1 or yp.ndim != 1:
+        raise ValueError("y_true and y_pred must be 1D arrays.")
+    if yt.shape != yp.shape:
         raise ValueError("y_true and y_pred must have the same shape.")
-    if np.isin(y_true, [0, 1]).all() == False:
-        raise ValueError("True labels must be either 0 or 1.")
-    if np.isin(y_pred, [0, 1]).all() == False:
-        raise ValueError("Predicted labels must be either 0 or 1.")
+    return yt, yp
 
-    # NaN Handling
-    if np.isnan(y_true).any() or np.isnan(y_pred).any():
-        print("Warning: NaNs were ignored to calculate accuracy.")
-        return np.nanmean(y_true == y_pred)
 
-    return np.mean(y_true == y_pred)
+def _drop_nan_pairs(y_true, y_pred):
+    if np.issubdtype(y_true.dtype, np.number) and np.issubdtype(y_pred.dtype, np.number):
+        mask = ~(np.isnan(y_true) | np.isnan(y_pred))
+        return y_true[mask], y_pred[mask]
+    return y_true, y_pred
+
+
+def _validate_binary(y_true, y_pred):
+    y_true, y_pred = _validate_same_shape_1d(y_true, y_pred)
+    y_true, y_pred = _drop_nan_pairs(y_true.astype(float), y_pred.astype(float))
+    if not np.all(np.isin(y_true, [0.0, 1.0])):
+        raise ValueError("y_true must contain only binary labels 0 and 1.")
+    if not np.all(np.isin(y_pred, [0.0, 1.0])):
+        raise ValueError("y_pred must contain only binary labels 0 and 1.")
+    return y_true.astype(int), y_pred.astype(int)
+
+
+def accuracy(y_true, y_pred):
+    """Return binary classification accuracy."""
+    y_true, y_pred = _validate_binary(y_true, y_pred)
+    if y_true.size == 0:
+        return 0.0
+    return float(np.mean(y_true == y_pred))
+
 
 def precision(y_true, y_pred):
-    """
-    Calculates the precision of a binary classification model given the true 
-    and predicted labels.
-    Args:
-        y_true (np.ndarray): Array of size (N,) containing true labels
-        y_pred (np.ndarray): Array of size (N,) containing predicted labels
-    Outputs:
-        float: Precision of the model.
-    """
+    """Return binary precision."""
+    y_true, y_pred = _validate_binary(y_true, y_pred)
+    tp = np.sum((y_true == 1) & (y_pred == 1))
+    fp = np.sum((y_true == 0) & (y_pred == 1))
+    denom = tp + fp
+    return 0.0 if denom == 0 else float(tp / denom)
 
-    # Exception Handling
-    if not isinstance(y_true, np.ndarray):
-        raise TypeError("y_true must be a NumPy array.")
-    if not isinstance(y_pred, np.ndarray):
-        raise TypeError("y_pred must be a NumPy array.")
-    if y_true.ndim != 1:
-        raise ValueError("y_true must be a 1D array.")
-    if y_pred.ndim != 1:
-        raise ValueError("y_pred must be a 1D array.")
-    if y_true.shape != y_pred.shape:
-        raise ValueError("y_true and y_pred must have the same shape.")
-    if np.isin(y_true, [0, 1]).all() == False:
-        raise ValueError("True labels must be either 0 or 1.")
-    if np.isin(y_pred, [0, 1]).all() == False:
-        raise ValueError("Predicted labels must be either 0 or 1.")
-
-    # NaN Handling
-    if np.isnan(y_true).any() or np.isnan(y_pred).any():
-        print("Warning: NaNs were ignored to calculate precision.")
-
-    num_true_pos = np.where((y_true == 1) & (y_pred == 1))[0].size
-    num_pred_pos = np.where(y_pred == 1)[0].size
-
-    # If no predicted positive return 0 by convention
-    if num_pred_pos == 0:
-        return 0
-
-    return num_true_pos / num_pred_pos
 
 def recall(y_true, y_pred):
-    """
-    Calculates the recall of a binary classification model given the true and
-    predicted labels.
-    Args:
-        y_true (np.ndarray): Array of size (N,) containing true labels
-        y_pred (np.ndarray): Array of size (N,) containing predicted labels
-    Outputs:
-        float: Recall of the model.
-    """
+    """Return binary recall."""
+    y_true, y_pred = _validate_binary(y_true, y_pred)
+    tp = np.sum((y_true == 1) & (y_pred == 1))
+    fn = np.sum((y_true == 1) & (y_pred == 0))
+    denom = tp + fn
+    return 0.0 if denom == 0 else float(tp / denom)
 
-    # Exception Handling
-    if not isinstance(y_true, np.ndarray):
-        raise TypeError("y_true must be a NumPy array.")
-    if not isinstance(y_pred, np.ndarray):
-        raise TypeError("y_pred must be a NumPy array.")
-    if y_true.ndim != 1:
-        raise ValueError("y_true must be a 1D array.")
-    if y_pred.ndim != 1:
-        raise ValueError("y_pred must be a 1D array.")
-    if y_true.shape != y_pred.shape:
-        raise ValueError("y_true and y_pred must have the same shape.")
-    if np.isin(y_true, [0, 1]).all() == False:
-        raise ValueError("True labels must be either 0 or 1.")
-    if np.isin(y_pred, [0, 1]).all() == False:
-        raise ValueError("Predicted labels must be either 0 or 1.")
-
-    # NaN Handling
-    if np.isnan(y_true).any() or np.isnan(y_pred).any():
-        print("Warning: NaNs were ignored to calculate recall.")
-
-    num_true_pos = np.where((y_true == 1) & (y_pred == 1))[0].size
-    num_pos = np.where(y_true == 1)[0].size
-
-    # If no actual positives return 0 by convention
-    if num_pos == 0:
-        return 0
-
-    return num_true_pos / num_pos
 
 def f1(y_true, y_pred):
-    """
-    Calculates the f1 score of a binary classification model given the true and
-    predicted labels.
-    Args:
-        y_true (np.ndarray): Array of size (N,) containing true labels
-        y_pred (np.ndarray): Array of size (N,) containing predicted labels
-    Outputs:
-        float: f1 score for the model
-    """
+    """Return binary F1 score."""
+    p = precision(y_true, y_pred)
+    r = recall(y_true, y_pred)
+    denom = p + r
+    return 0.0 if denom == 0 else float(2 * p * r / denom)
 
-    prec = precision(y_true, y_pred)
-    rec = recall(y_true, y_pred)
-
-    if prec + rec == 0:
-        return 0
-
-    return 2 * prec * rec / (prec + rec)
 
 def confusion_matrix(y_true, y_pred):
     """
-    Calculates the confusion matrix of a binary classification model given the true
-    and predicted labels.
-    Args:
-        y_true (np.ndarray): Array of size (N,) containing true labels
-        y_pred (np.ndarray): Array of size (N,) containing predicted labels
-    Outputs:
-        np.ndarray: Confusion matrix for the model
+    Return confusion matrix in the standard layout:
+    [[TN, FP],
+     [FN, TP]]
     """
+    y_true, y_pred = _validate_binary(y_true, y_pred)
+    tn = np.sum((y_true == 0) & (y_pred == 0))
+    fp = np.sum((y_true == 0) & (y_pred == 1))
+    fn = np.sum((y_true == 1) & (y_pred == 0))
+    tp = np.sum((y_true == 1) & (y_pred == 1))
+    return np.array([[tn, fp], [fn, tp]], dtype=int)
 
-    # Exception Handling
-    if not isinstance(y_true, np.ndarray):
-        raise TypeError("y_true must be a NumPy array.")
-    if not isinstance(y_pred, np.ndarray):
-        raise TypeError("y_pred must be a NumPy array.")
-    if y_true.ndim != 1:
-        raise ValueError("y_true must be a 1D array.")
-    if y_pred.ndim != 1:
-        raise ValueError("y_pred must be a 1D array.")
-    if y_true.shape != y_pred.shape:
-        raise ValueError("y_true and y_pred must have the same shape.")
-    if np.isin(y_true, [0, 1]).all() == False:
-        raise ValueError("True labels must be either 0 or 1.")
-    if np.isin(y_pred, [0, 1]).all() == False:
-        raise ValueError("Predicted labels must be either 0 or 1.")
-
-    # NaN Handling
-    if np.isnan(y_true).any() or np.isnan(y_pred).any():
-        print("Warning: NaNs were ignored to calculate confusion matrix.")
-
-    num_true_pos = np.where((y_true == 1) & (y_pred == 1))[0].size
-    num_false_pos = np.where((y_true == 0) & (y_pred == 1))[0].size
-    num_false_neg = np.where((y_true == 1) & (y_pred == 0))[0].size
-    num_true_neg = np.where((y_true == 0) & (y_pred == 0))[0].size
-
-    conf_mat = np.array([[num_true_pos, num_false_pos],
-                         [num_false_neg, num_true_neg]])
-
-    return conf_mat
 
 def mse(y_true, y_pred):
-    """
-    Calculates the MSE of a regression model given the true and
-    predicted values.
-    Args:
-        y_true (np.ndarray): Array of size (N,) containing true outcome values
-        y_pred (np.ndarray): Array of size (N,) containing predicted outcome
-                             values
-    Outputs:
-        float: MSE of the regression model.
-    """
-
-    # Exception Handling
-    if not isinstance(y_true, np.ndarray):
-        raise TypeError("y_true must be a NumPy array.")
-    if not isinstance(y_pred, np.ndarray):
-        raise TypeError("y_pred must be a NumPy array.")
-    if y_true.ndim != 1:
-        raise ValueError("y_true must be a 1D array.")
-    if y_pred.ndim != 1:
-        raise ValueError("y_pred must be a 1D array.")
-    if y_true.shape != y_pred.shape:
-        raise ValueError("y_true and y_pred must have the same shape.")
-
-    # NaN Handling
-    if np.isnan(y_true).any() or np.isnan(y_pred).any():
-        print("Warning: NaNs were ignored to calculate MSE.")
-        return np.nanmean((y_true - y_pred) ** 2)
-
-    return np.mean((y_true - y_pred) ** 2)
+    """Return mean squared error for regression."""
+    y_true, y_pred = _validate_same_shape_1d(np.asarray(y_true, dtype=float), np.asarray(y_pred, dtype=float))
+    y_true, y_pred = _drop_nan_pairs(y_true, y_pred)
+    if y_true.size == 0:
+        return 0.0
+    return float(np.mean((y_true - y_pred) ** 2))
