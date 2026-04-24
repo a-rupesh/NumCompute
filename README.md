@@ -40,29 +40,6 @@ NumCompute/
 └── requirements.txt
 ---
 
-## Team Contributions
-
-- Member 1 (Rupesh):
-  - Implemented IO module (load_csv)
-  - Implemented preprocessing (StandardScaler, MinMaxScaler, SimpleImputer, OneHotEncoder)
-  - Created demo notebook and demo script
-
-- Member 2:
-  - Implemented sorting and searching (sort_array, top_k, binary_search, quickselect)
-  - Implemented ranking (rank, percentile)
-
-- Member 3:
-  - Implemented statistics (mean, median, std, quantile, histogram)
-  - Implemented metrics (accuracy, precision, recall, f1, confusion_matrix, mse)
-
-- Member 4:
-  - Implemented optimization (grad, jacobian)
-  - Implemented pipeline and feature union
-  - Assisted in integration and testing
-
-- Testing:
-  - All members contributed to writing and validating test cases
-
 Modules
 io.py
 
