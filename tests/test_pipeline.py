@@ -60,3 +60,38 @@ def test_pipeline_predict_without_model_raises():
     pipe = Pipeline([("scale", StandardScaler())]).fit(X)
     with pytest.raises(ValueError):
         pipe.predict(X)
+
+def test_invalid_step_format():
+    import pytest
+    with pytest.raises(ValueError):
+        Pipeline([("only_name",)])        
+
+class BadStep:
+    pass
+
+def test_missing_fit_raises():
+    import pytest
+    with pytest.raises(ValueError):
+        Pipeline([("bad", BadStep())])
+
+class NoTransform:
+    def fit(self, X, y=None):
+        return self
+
+def test_missing_transform_in_middle():
+    import pytest
+    pipe = Pipeline([("bad", NoTransform()), ("model", DummyModel())])
+    with pytest.raises(ValueError):
+        pipe.fit(np.array([[1.0]]))
+
+class BadTransformer:
+    def fit(self, X, y=None):
+        return self
+    def transform(self, X):
+        return np.array([1, 2, 3])  # 1D
+
+def test_feature_union_invalid_shape():
+    import pytest
+    union = FeatureUnion([("bad", BadTransformer())])
+    with pytest.raises(ValueError):
+        union.fit_transform(np.array([[1], [2], [3]]))        
