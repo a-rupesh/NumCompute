@@ -33,3 +33,15 @@ def test_jacobian_vector_function():
 def test_grad_invalid_method():
     with pytest.raises(ValueError):
         grad(lambda x: x[0], np.array([1.0]), method="bad")
+
+def test_grad_non_callable_raises():
+    with pytest.raises(TypeError):
+        grad("not_callable", np.array([1.0]))
+
+def test_grad_invalid_h_raises():
+    with pytest.raises(ValueError):
+        grad(lambda x: x[0], np.array([1.0]), h=0)
+
+def test_jacobian_scalar_output():
+    J = jacobian(lambda x: x[0] ** 2, np.array([3.0]))
+    assert np.allclose(J, np.array([[6.0]]), atol=1e-4)        
