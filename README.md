@@ -29,7 +29,7 @@ This toolkit is designed to provide:
   - Implemented sorting and searching (sort_array, top_k, binary_search, quickselect)
   - Implemented ranking (rank, percentile)
 
-- Member 3 (Alexander Smith):
+- Member 3 (Alexander Tarin Smith):
   - Implemented statistics (mean, median, std, quantile, histogram)
   - Implemented metrics (accuracy, precision, recall, f1, confusion_matrix, mse)
 
