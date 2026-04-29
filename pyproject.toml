@@ -8,6 +8,10 @@ version = "0.1.0"
 description = "A lightweight NumPy-based scientific computing toolkit"
 readme = "README.md"
 requires-python = ">=3.9"
+authors = [
+    { name = "NumCompute Team" }
+]
+keywords = ["numpy", "scientific-computing", "machine-learning", "coursework"]
 dependencies = [
     "numpy",
 ]
