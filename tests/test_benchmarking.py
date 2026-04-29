@@ -8,6 +8,30 @@ from numcompute.benchmarking import (
     vectorized_sum_of_squares,
 )
 
+import pytest
+
+def test_benchmark_invalid_func():
+    with pytest.raises(TypeError):
+        benchmark_function(123, np.array([1, 2, 3]))
+
+def test_benchmark_invalid_repeat():
+    with pytest.raises(ValueError):
+        benchmark_function(vectorized_sum_of_squares, np.array([1, 2]), repeat=0)
+
+def test_benchmark_invalid_warmup():
+    with pytest.raises(ValueError):
+        benchmark_function(vectorized_sum_of_squares, np.array([1, 2]), warmup=-1)
+
+def test_compare_functions_mismatch():
+    def f(x):
+        return x + 1
+
+    def g(x):
+        return x + 2
+
+    import pytest
+    with pytest.raises(ValueError):
+        compare_functions(f, g, np.array([1, 2]))
 
 def test_benchmark_function_returns_expected_keys():
     x = np.arange(1000, dtype=float)
