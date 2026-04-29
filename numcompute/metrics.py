@@ -87,3 +87,76 @@ def mse(y_true, y_pred):
     if y_true.size == 0:
         return 0.0
     return float(np.mean((y_true - y_pred) ** 2))
+
+def roc_curve(y_true, y_score):
+    """
+    Compute ROC curve for binary classification.
+
+    Parameters
+    ----------
+    y_true : array-like of shape (n,)
+        True binary labels (0 or 1).
+    y_score : array-like of shape (n,)
+        Predicted scores or probabilities.
+
+    Returns
+    -------
+    fpr : np.ndarray
+    tpr : np.ndarray
+    thresholds : np.ndarray
+    """
+    y_true = np.asarray(y_true, dtype=float)
+    y_score = np.asarray(y_score, dtype=float)
+
+    if y_true.ndim != 1 or y_score.ndim != 1:
+        raise ValueError("y_true and y_score must be 1D arrays.")
+    if y_true.shape != y_score.shape:
+        raise ValueError("y_true and y_score must have the same shape.")
+    if not np.all(np.isin(y_true, [0, 1])):
+        raise ValueError("y_true must be binary (0 and 1).")
+
+    # sort by descending score
+    desc_idx = np.argsort(-y_score)
+    y_true = y_true[desc_idx]
+    y_score = y_score[desc_idx]
+
+    # cumulative sums
+    tp = np.cumsum(y_true)
+    fp = np.cumsum(1 - y_true)
+
+    # total positives / negatives
+    P = np.sum(y_true)
+    N = len(y_true) - P
+
+    if P == 0 or N == 0:
+        raise ValueError("ROC curve is undefined when only one class is present.")
+
+    tpr = tp / P
+    fpr = fp / N
+
+    thresholds = y_score
+
+    return fpr, tpr, thresholds
+
+def auc(x, y):
+    """
+    Compute Area Under Curve using trapezoidal rule.
+
+    Parameters
+    ----------
+    x : array-like
+    y : array-like
+
+    Returns
+    -------
+    float
+    """
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+
+    if x.ndim != 1 or y.ndim != 1:
+        raise ValueError("Inputs must be 1D arrays.")
+    if x.shape != y.shape:
+        raise ValueError("x and y must have same shape.")
+
+    return float(np.trapezoid(y, x))
